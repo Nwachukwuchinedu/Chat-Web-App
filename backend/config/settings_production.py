@@ -35,7 +35,7 @@ else:
     }
 
 # CORS settings for production
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:8080').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS')
 
 # Static files configuration
 STATIC_URL = '/static/'
