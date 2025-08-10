@@ -3,8 +3,16 @@
 
 echo "🚀 Starting build process..."
 
-# Install dependencies
+# Install system dependencies for psycopg2
+echo "🔧 Installing system dependencies..."
+apt-get update -qq && apt-get install -y \
+    libpq-dev \
+    gcc \
+    python3-dev
+
+# Install Python dependencies
 echo "📦 Installing Python dependencies..."
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Run database migrations
