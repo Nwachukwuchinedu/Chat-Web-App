@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: chat-backend
+    env: python
+    plan: free
+    buildCommand: |
+      cd backend
+      chmod +x build.sh
+      ./build.sh
+    startCommand: |
+      cd backend
+      python -m daphne -b 0.0.0.0 -p $PORT config.asgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings_production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chat-postgres
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://chat-web-app-mocha.vercel.app,http://localhost:8080"
+      - key: REDIS_URL
+        value: "redis://localhost:6379"
+    healthCheckPath: /api/auth/me/
+
+databases:
+  - name: chat-postgres
+    databaseName: chatdb
+    user: chatuser
+    plan: free 
