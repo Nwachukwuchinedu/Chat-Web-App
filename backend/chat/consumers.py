@@ -16,11 +16,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Get user from scope (set by middleware)
         self.user = self.scope.get('user')
         if not self.user or self.user.is_anonymous:
+            print(f"WebSocket connection rejected: user not authenticated")
             await self.close()
             return
 
         # Check if user is participant of this conversation
         if not await self.is_participant():
+            print(f"WebSocket connection rejected: user {self.user.username} not participant of conversation {self.conversation_id}")
             await self.close()
             return
 
@@ -31,6 +33,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+        print(f"WebSocket connected: user {self.user.username} to conversation {self.conversation_id}")
 
         # Send user joined message
         await self.channel_layer.group_send(
@@ -39,7 +42,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'type': 'user_join',
                 'user_id': self.user.id,
                 'username': self.user.username,
-                'display_name': self.user.display_name,
+                'display_name': getattr(self.user, 'display_name', self.user.username),
             }
         )
 
@@ -51,14 +54,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         # Send user left message
-        if hasattr(self, 'user') and self.user:
+        if hasattr(self, 'user') and self.user and not self.user.is_anonymous:
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'user_leave',
                     'user_id': self.user.id,
                     'username': self.user.username,
-                    'display_name': self.user.display_name,
+                    'display_name': getattr(self.user, 'display_name', self.user.username),
                 }
             )
 
@@ -80,7 +83,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message': message,
                     'user_id': self.user.id,
                     'username': self.user.username,
-                    'display_name': self.user.display_name,
+                    'display_name': getattr(self.user, 'display_name', self.user.username),
                     'message_id': saved_message.id,
                     'timestamp': saved_message.created_at.isoformat(),
                 }
@@ -93,7 +96,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'user_typing',
                     'user_id': self.user.id,
                     'username': self.user.username,
-                    'display_name': self.user.display_name,
+                    'display_name': getattr(self.user, 'display_name', self.user.username),
                     'typing': is_typing,
                 }
             )

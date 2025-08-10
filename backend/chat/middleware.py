@@ -1,3 +1,4 @@
+import logging
 from channels.middleware import BaseMiddleware
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
@@ -6,6 +7,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.core.exceptions import ObjectDoesNotExist
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 class JWTAuthMiddleware(BaseMiddleware):
@@ -32,8 +34,14 @@ class JWTAuthMiddleware(BaseMiddleware):
                 user = await self.get_user_from_token(token)
                 if user:
                     scope['user'] = user
-            except (InvalidToken, TokenError, ObjectDoesNotExist):
+                    logger.info(f"WebSocket authenticated user: {user.username}")
+                else:
+                    logger.warning("WebSocket authentication failed: user not found")
+            except (InvalidToken, TokenError, ObjectDoesNotExist) as e:
+                logger.warning(f"WebSocket authentication error: {str(e)}")
                 pass
+        else:
+            logger.warning("WebSocket connection attempt without token")
         
         return await super().__call__(scope, receive, send)
 

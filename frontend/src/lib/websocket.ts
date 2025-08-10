@@ -32,19 +32,23 @@ export class ChatWebSocket {
     return new Promise((resolve, reject) => {
       this.conversationId = conversationId;
       const token = getAccessToken();
-      
+
       if (!token) {
         reject(new Error('No access token available'));
         return;
       }
 
-      const wsUrl = `ws://localhost:8000/ws/chat/${conversationId}/?token=${token}`;
+      // Use production WebSocket URL if available, otherwise fallback to localhost
+      const isProduction = window.location.hostname !== 'localhost';
+      const wsProtocol = isProduction ? 'wss' : 'ws';
+      const wsHost = isProduction ? 'chat-web-app-wh20.onrender.com' : 'localhost:8000';
+      const wsUrl = `${wsProtocol}://${wsHost}/ws/chat/${conversationId}/?token=${token}`;
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
         console.log('WebSocket connected');
         this.reconnectAttempts = 0;
-        
+
         if (this.onConnectCallback) {
           this.onConnectCallback();
         }
@@ -64,7 +68,7 @@ export class ChatWebSocket {
 
       this.ws.onclose = (event) => {
         console.log('WebSocket disconnected:', event.code, event.reason);
-        
+
         if (this.onDisconnectCallback) {
           this.onDisconnectCallback();
         }
@@ -73,7 +77,7 @@ export class ChatWebSocket {
         if (event.code !== 1000 && this.reconnectAttempts < this.maxReconnectAttempts) {
           this.reconnectAttempts++;
           console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
-          
+
           setTimeout(() => {
             if (this.conversationId) {
               this.connect(this.conversationId).catch(console.error);
