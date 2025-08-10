@@ -3,12 +3,10 @@
 
 echo "🚀 Starting build process..."
 
-# Install system dependencies for psycopg2
+# Install system dependencies for psycopg3
 echo "🔧 Installing system dependencies..."
 apt-get update -qq && apt-get install -y \
-    libpq-dev \
-    gcc \
-    python3-dev
+    libpq-dev
 
 # Install Python dependencies
 echo "📦 Installing Python dependencies..."
