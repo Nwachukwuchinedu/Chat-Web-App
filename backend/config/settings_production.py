@@ -35,24 +35,23 @@ else:
     }
 
 # CORS settings for production
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if os.getenv('CORS_ALLOWED_ORIGINS') else []
+cors_env = os.getenv('CORS_ALLOWED_ORIGINS', '')
+print(f"🔧 Raw CORS_ALLOWED_ORIGINS env var: '{cors_env}'")
 
-# Debug CORS settings
-print(f"🔧 CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
-print(f"🔧 CORS_ALLOWED_ORIGINS env var: {os.getenv('CORS_ALLOWED_ORIGINS')}")
-
-# Fallback CORS settings if environment variable is not set
-if not CORS_ALLOWED_ORIGINS:
+if cors_env:
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_env.split(',') if origin.strip()]
+else:
     CORS_ALLOWED_ORIGINS = [
         'https://chat-web-app-mocha.vercel.app',
         'http://localhost:8080',
         'http://127.0.0.1:8080'
     ]
-    print(f"🔧 Using fallback CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
+
+print(f"🔧 Final CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
 
 # Additional CORS settings for production
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True  # Temporarily allow all origins for debugging
 CORS_ALLOWED_HEADERS = [
     'accept',
     'accept-encoding',
@@ -73,6 +72,10 @@ CORS_ALLOWED_METHODS = [
     'PUT',
 ]
 
+# Additional CORS settings for debugging
+CORS_URLS_REGEX = r'^.*$'  # Apply to all URLs
+CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
+
 # Static files configuration
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -88,7 +91,7 @@ except Exception as e:
 
 # Add whitenoise middleware for static files
 MIDDLEWARE = [
-    "config.cors_middleware.CustomCorsMiddleware",  # Custom CORS middleware
+    "corsheaders.middleware.CorsMiddleware",  # Must be at the top
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Add this line
     "django.contrib.sessions.middleware.SessionMiddleware",

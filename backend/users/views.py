@@ -51,16 +51,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         
         final_response = super().finalize_response(request, response, *args, **kwargs)
         print(f"🔧 Token view - Final response headers: {dict(final_response.headers)}")
-        
-        # Add CORS headers directly to the response
-        origin = request.headers.get('Origin')
-        if origin == 'https://chat-web-app-mocha.vercel.app':
-            final_response['Access-Control-Allow-Origin'] = origin
-            final_response['Access-Control-Allow-Credentials'] = 'true'
-            final_response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-            final_response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
-            print(f"🔧 Token view - Added CORS headers: {dict(final_response.headers)}")
-        
         return final_response
 
 
