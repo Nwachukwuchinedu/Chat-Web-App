@@ -37,6 +37,42 @@ else:
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if os.getenv('CORS_ALLOWED_ORIGINS') else []
 
+# Debug CORS settings
+print(f"🔧 CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
+print(f"🔧 CORS_ALLOWED_ORIGINS env var: {os.getenv('CORS_ALLOWED_ORIGINS')}")
+
+# Fallback CORS settings if environment variable is not set
+if not CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS = [
+        'https://chat-web-app-mocha.vercel.app',
+        'http://localhost:8080',
+        'http://127.0.0.1:8080'
+    ]
+    print(f"🔧 Using fallback CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
+
+# Additional CORS settings for production
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_ALLOWED_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
 # Static files configuration
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
