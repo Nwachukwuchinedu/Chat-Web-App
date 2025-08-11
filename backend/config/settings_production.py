@@ -35,11 +35,14 @@ else:
     }
 
 # CORS settings for production
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if os.getenv('CORS_ALLOWED_ORIGINS') else []
 
 # Static files configuration
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Ensure STATIC_ROOT exists
+os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # Add whitenoise middleware for static files
 MIDDLEWARE = [
