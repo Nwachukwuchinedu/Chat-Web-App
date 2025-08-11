@@ -41,8 +41,14 @@ CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if os.ge
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Ensure STATIC_ROOT exists
-os.makedirs(STATIC_ROOT, exist_ok=True)
+# Ensure STATIC_ROOT exists and is absolute
+try:
+    os.makedirs(STATIC_ROOT, exist_ok=True)
+    print(f"✅ STATIC_ROOT created/verified: {STATIC_ROOT}")
+except Exception as e:
+    print(f"⚠️  Could not create STATIC_ROOT: {e}")
+    # Fallback to a simple path
+    STATIC_ROOT = '/tmp/staticfiles'
 
 # Add whitenoise middleware for static files
 MIDDLEWARE = [

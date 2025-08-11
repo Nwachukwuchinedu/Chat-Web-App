@@ -23,7 +23,7 @@ python manage.py migrate
 # Collect static files
 echo "📁 Collecting static files..."
 mkdir -p staticfiles
-python manage.py collectstatic --noinput --clear --verbosity=0 || echo "⚠️  Static files collection completed (no static files to collect)"
+python manage.py collectstatic --noinput --clear --verbosity=1 || echo "⚠️  Static files collection completed (no static files to collect)"
 
 # Create superuser if needed (optional)
 # echo "👤 Creating superuser..."

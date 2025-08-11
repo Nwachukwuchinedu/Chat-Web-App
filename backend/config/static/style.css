@@ -1,0 +1,6 @@
+/* Simple CSS file to ensure static files collection works */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* This file ensures Django has static files to collect */
