@@ -26,14 +26,14 @@ class CustomCorsMiddleware(MiddlewareMixin):
         # Add CORS headers to all responses
         origin = request.headers.get('Origin')
         
-        # Allow requests from your frontend domain
-        if origin == 'https://chat-web-app-mocha.vercel.app':
+        # Temporarily allow all origins for debugging
+        if origin:
             response['Access-Control-Allow-Origin'] = origin
             response['Access-Control-Allow-Credentials'] = 'true'
+            response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+            response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+            
+            logger.info(f"CORS Middleware - Response: {response.status_code} for {request.path}")
+            logger.info(f"CORS Middleware - Added headers for origin {origin}")
         
-        # Add other CORS headers
-        response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
-        
-        logger.info(f"CORS Middleware - Response: {response.status_code}")
         return response 

@@ -23,6 +23,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         print(f"🔧 Token view - Request method: {request.method}")
         print(f"🔧 Token view - Request origin: {request.headers.get('Origin', 'No Origin')}")
         print(f"🔧 Token view - Response status: {response.status_code}")
+        print(f"🔧 Token view - Response headers before: {dict(response.headers)}")
         
         # Get the tokens from the response
         if response.status_code == 200:
@@ -48,7 +49,19 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             
             print(f"Cookie set successfully. Response data: {response.data}")  # Debug log
         
-        return super().finalize_response(request, response, *args, **kwargs)
+        final_response = super().finalize_response(request, response, *args, **kwargs)
+        print(f"🔧 Token view - Final response headers: {dict(final_response.headers)}")
+        
+        # Add CORS headers directly to the response
+        origin = request.headers.get('Origin')
+        if origin == 'https://chat-web-app-mocha.vercel.app':
+            final_response['Access-Control-Allow-Origin'] = origin
+            final_response['Access-Control-Allow-Credentials'] = 'true'
+            final_response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+            final_response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+            print(f"🔧 Token view - Added CORS headers: {dict(final_response.headers)}")
+        
+        return final_response
 
 
 class MeView(generics.RetrieveAPIView):

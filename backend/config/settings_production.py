@@ -89,7 +89,6 @@ except Exception as e:
 # Add whitenoise middleware for static files
 MIDDLEWARE = [
     "config.cors_middleware.CustomCorsMiddleware",  # Custom CORS middleware
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Add this line
     "django.contrib.sessions.middleware.SessionMiddleware",
