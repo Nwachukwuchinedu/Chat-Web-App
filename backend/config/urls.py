@@ -17,19 +17,26 @@ def health_check(request):
 @require_http_methods(["GET", "POST", "OPTIONS"])
 def cors_test(request):
     """Test endpoint to check CORS configuration"""
+    print(f"🔧 CORS Test - Request method: {request.method}")
+    print(f"🔧 CORS Test - Request origin: {request.headers.get('Origin', 'No origin header')}")
+    print(f"🔧 CORS Test - Request headers: {dict(request.headers)}")
+    
     if request.method == "OPTIONS":
         # Handle preflight request
-        response = JsonResponse({})
-        response["Access-Control-Allow-Origin"] = "*"
+        response = JsonResponse({"message": "Preflight request handled"})
+        response["Access-Control-Allow-Origin"] = "https://chat-web-app-mocha.vercel.app"
         response["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
+        response["Access-Control-Allow-Credentials"] = "true"
+        print(f"🔧 CORS Test - Preflight response headers: {dict(response.headers)}")
         return response
     
     return JsonResponse({
         "status": "ok", 
         "message": "CORS test successful",
         "method": request.method,
-        "origin": request.headers.get('Origin', 'No origin header')
+        "origin": request.headers.get('Origin', 'No origin header'),
+        "headers": dict(request.headers)
     })
 
 urlpatterns = [

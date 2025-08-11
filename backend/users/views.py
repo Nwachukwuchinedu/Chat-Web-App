@@ -19,6 +19,11 @@ class RegisterView(generics.CreateAPIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def finalize_response(self, request, response, *args, **kwargs):
+        # Debug logging
+        print(f"🔧 Token view - Request method: {request.method}")
+        print(f"🔧 Token view - Request origin: {request.headers.get('Origin', 'No Origin')}")
+        print(f"🔧 Token view - Response status: {response.status_code}")
+        
         # Get the tokens from the response
         if response.status_code == 200:
             data = response.data

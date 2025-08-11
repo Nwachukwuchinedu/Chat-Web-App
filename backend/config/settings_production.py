@@ -88,6 +88,7 @@ except Exception as e:
 
 # Add whitenoise middleware for static files
 MIDDLEWARE = [
+    "config.cors_middleware.CustomCorsMiddleware",  # Custom CORS middleware
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Add this line
@@ -125,6 +126,28 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+
+# Logging configuration for debugging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'config.cors_middleware': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
 
 # HTTPS settings (uncomment when you have SSL)
 # SECURE_SSL_REDIRECT = True
