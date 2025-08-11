@@ -21,16 +21,6 @@ def cors_test(request):
     print(f"🔧 CORS Test - Request origin: {request.headers.get('Origin', 'No origin header')}")
     print(f"🔧 CORS Test - Request headers: {dict(request.headers)}")
     
-    if request.method == "OPTIONS":
-        # Handle preflight request
-        response = JsonResponse({"message": "Preflight request handled"})
-        response["Access-Control-Allow-Origin"] = "https://chat-web-app-mocha.vercel.app"
-        response["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
-        response["Access-Control-Allow-Credentials"] = "true"
-        print(f"🔧 CORS Test - Preflight response headers: {dict(response.headers)}")
-        return response
-    
     return JsonResponse({
         "status": "ok", 
         "message": "CORS test successful",
@@ -46,16 +36,6 @@ def auth_test(request):
     print(f"🔧 Auth Test - Request method: {request.method}")
     print(f"🔧 Auth Test - Request origin: {request.headers.get('Origin', 'No origin header')}")
     print(f"🔧 Auth Test - All headers: {dict(request.headers)}")
-    
-    if request.method == "OPTIONS":
-        # Handle preflight request
-        response = JsonResponse({"message": "Auth preflight handled"})
-        response["Access-Control-Allow-Origin"] = "*"  # Allow all origins for testing
-        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
-        response["Access-Control-Allow-Credentials"] = "true"
-        print(f"🔧 Auth Test - Preflight response headers: {dict(response.headers)}")
-        return response
     
     # Simulate auth response
     response = JsonResponse({
